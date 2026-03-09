@@ -28,7 +28,7 @@ src = [
     'src/MidiPlayer.cpp',
 ]
 
-edgeminhook = dependency('EDGEMinHook', default_options: ['vcpkg_triplet=' + get_option('vcpkg_triplet')], fallback: ['EDGEMinHook', 'edgeminhook_dep'])
+edgeminhook = dependency('EdgeMinHook', default_options: ['vcpkg_triplet=' + get_option('vcpkg_triplet')], fallback: ['EdgeMinHook', 'edgeminhook_dep'])
 
 deps = [edgeminhook]
 

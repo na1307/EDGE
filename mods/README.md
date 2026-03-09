@@ -14,7 +14,7 @@ This directory contains several Mods.
 
 The following commands are assumed to be run from the Visual Studio Developer Command Prompt.
 
-First of all, you need to install the vcpkg packages for `EDGEMinHook`.
+First of all, you need to install the vcpkg packages for `EdgeMinHook`.
 
 ```
 vcpkg install --triplet=x86-windows-static-md-custom

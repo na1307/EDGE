@@ -1,4 +1,4 @@
-project('EDGEKoreanPatch', 'cpp', default_options: ['c_std=c17', 'cpp_std=vc++20'], meson_version: '>=1.3')
+project('EdgeKoreanPatch', 'cpp', default_options: ['c_std=c17', 'cpp_std=vc++20'], meson_version: '>=1.3')
 
 cpp = meson.get_compiler('cpp')
 cpp_id = cpp.get_id()
@@ -27,8 +27,8 @@ src = [
     'src/dllmain.cpp',
 ]
 
-edgeminhook = dependency('EDGEMinHook', default_options: ['vcpkg_triplet=' + get_option('vcpkg_triplet')], fallback: ['EDGEMinHook', 'edgeminhook_dep'])
+edgeminhook = dependency('EdgeMinHook', default_options: ['vcpkg_triplet=' + get_option('vcpkg_triplet')], fallback: ['EdgeMinHook', 'edgeminhook_dep'])
 
 deps = [edgeminhook]
 
-shared_library('EDGEKoreanPatch', src, dependencies: deps, name_suffix: 'asi', win_subsystem: 'windows')
+shared_library('EdgeKoreanPatch', src, dependencies: deps, name_suffix: 'asi', win_subsystem: 'windows')

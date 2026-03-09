@@ -1,4 +1,4 @@
-project('EDGEMinHook', 'c', default_options: ['c_std=c17', 'cpp_std=vc++20'], meson_version: '>=1.3')
+project('EdgeMinHook', 'c', default_options: ['c_std=c17', 'cpp_std=vc++20'], meson_version: '>=1.3')
 
 c = meson.get_compiler('c')
 c_id = c.get_id()
@@ -41,6 +41,10 @@ minhook = c.find_library('minhook.x32' + d, dirs: [vcpkg_libdir], static: true)
 inc = [vcpkg_incdir, edgeminhook_incdir]
 lib = [minhook]
 
-dll = shared_library('EDGEMinHook', src, include_directories: inc, dependencies: lib, win_subsystem: 'windows')
+windows = import('windows')
+
+resource = windows.compile_resources('src/Resource.rc')
+
+dll = shared_library('EdgeMinHook', [src, resource], include_directories: inc, dependencies: lib, win_subsystem: 'windows')
 
 edgeminhook_dep = declare_dependency(include_directories: [edgeminhook_incdir], link_with: [dll])
