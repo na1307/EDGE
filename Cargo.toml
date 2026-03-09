@@ -1,0 +1,15 @@
+[package]
+name = "edgemodtool"
+version = "0.0.0"
+edition = "2024"
+
+[[bin]]
+name = "EdgeModTool-Cli"
+path = "edgemodtool-rs/main.rs"
+
+[lib]
+name = "EdgeModToolCore"
+path = "edgemodtool-rs/lib.rs"
+crate-type = ["rlib", "cdylib"]
+
+[dependencies]
