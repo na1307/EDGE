@@ -14,11 +14,19 @@ This directory contains several Mods.
 
 The following commands are assumed to be run from the Visual Studio Developer Command Prompt.
 
-First of all, you need to install the vcpkg packages.
+First of all, you need to install the vcpkg packages for `EDGEMinHook`.
 
 ```
-vcpkg install --triplet=x86-windows-static-md
+vcpkg install --triplet=x86-windows-static-md-custom
 ```
+
+If you want to use Clang, type this instead:
+
+```
+vcpkg install --triplet=x86-windows-static-md-custom-clang
+```
+
+> **Important**: If you used Clang in the vcpkg step, you must also use Clang in the meson step. Similarly, if you used MSVC in the vcpkg step, you must also use MSVC in the meson step.
 
 Then do any of the following:
 

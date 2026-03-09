@@ -10,6 +10,7 @@ c = ['clang-cl', '-m32', '-msse3', '-fuse-ld=lld', '--target=i686-pc-windows-msv
 cpp = ['clang-cl', '-m32', '-msse3', '-fuse-ld=lld', '--target=i686-pc-windows-msvc'] + msvc_includes
 ar = 'llvm-lib'
 strip = 'llvm-strip'
+rc = 'llvm-rc'
 
 [built-in options]
 c_link_args = msvc_libs
