@@ -4,6 +4,7 @@ using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using EdgeModTool.LibTwoTribes;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
 
 namespace EdgeModTool.Views;
 
@@ -15,6 +16,9 @@ internal sealed partial class MainWindow : Window {
     }
 
     private static bool IsSingleFile([NotNullWhen(true)] IStorageItem[]? items) => items?.Length == 1 && File.Exists(items[0].Path.LocalPath);
+
+    [LibraryImport("edgemodtoolcore", StringMarshalling = StringMarshalling.Utf8)]
+    private static partial int decompile_text_loc(string textLocPath, string jsonPath);
 
     private void DragOverHandler(object? sender, DragEventArgs e) {
         var files = e.DataTransfer.TryGetFiles();
@@ -30,10 +34,6 @@ internal sealed partial class MainWindow : Window {
         }
 
         var filePath = files[0].Path.LocalPath;
-
-        if (Path.GetFileName(filePath).Equals("text.loc", StringComparison.OrdinalIgnoreCase)) {
-            var loc = LOC.FromFile(filePath);
-        }
     }
 
     private async void Button_OnClick(object? sender, RoutedEventArgs e) {
@@ -45,17 +45,15 @@ internal sealed partial class MainWindow : Window {
 
         switch (Path.GetFileName(files[0].Path.LocalPath)) {
             case "text.loc":
-                var loc = LOC.FromFile(localPath);
+                var result = decompile_text_loc(localPath, Path.Combine(Path.GetDirectoryName(localPath)!, "text.json"));
 
-                loc.SaveJson("/mnt/data/temp/test.json");
+                if (result != 0) {
+                    throw new(result.ToString());
+                }
 
                 break;
 
             case "text.json":
-                var newLoc = LOC.FromJson(await File.ReadAllBytesAsync(localPath));
-
-                newLoc.Save("/mnt/data/temp/text.loc");
-
                 break;
 
             case "font.bin":

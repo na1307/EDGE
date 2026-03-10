@@ -1,3 +1,1 @@
-fn main() {
-    println!("{}", EdgeModToolCore::nega());
-}
+fn main() {}

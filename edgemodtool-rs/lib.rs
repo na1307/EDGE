@@ -1,4 +1,43 @@
-#![allow(non_snake_case)]
+use crate::loc::Loc;
+use std::ffi::{CStr, c_char};
+use std::fs::File;
+use std::io::{BufReader, BufWriter};
+
+pub mod loc;
 
 #[unsafe(no_mangle)]
-pub extern "C" fn nega() -> i32 {0}
+extern "C" fn decompile_text_loc(text_loc_path: *const c_char, json_path: *const c_char) -> i32 {
+    if text_loc_path.is_null() || json_path.is_null() {
+        return -1;
+    }
+
+    let Ok(text_loc_path) = unsafe { CStr::from_ptr(text_loc_path) }.to_str() else {
+        return 1;
+    };
+
+    let Ok(f1) = File::open(text_loc_path) else {
+        return 2;
+    };
+
+    let br = BufReader::new(f1);
+
+    let Ok(loc) = Loc::from_text_loc(br) else {
+        return 3;
+    };
+
+    let Ok(json_path) = unsafe { CStr::from_ptr(json_path) }.to_str() else {
+        return 1;
+    };
+
+    let Ok(f2) = File::create(json_path) else {
+        return 2;
+    };
+
+    let bw = BufWriter::new(f2);
+
+    if loc.save_json(bw).is_err() {
+        return 3;
+    }
+
+    0
+}
