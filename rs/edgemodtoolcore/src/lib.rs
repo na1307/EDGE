@@ -1,9 +1,11 @@
+pub mod loc;
+pub mod mod_definition;
+pub mod profiles;
+
 use crate::loc::Loc;
 use std::ffi::{CStr, c_char};
 use std::fs::File;
 use std::io::{BufReader, BufWriter};
-
-pub mod loc;
 
 #[unsafe(no_mangle)]
 extern "C" fn decompile_text_loc(text_loc_path: *const c_char, json_path: *const c_char) -> i32 {

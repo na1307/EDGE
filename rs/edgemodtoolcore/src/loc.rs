@@ -7,7 +7,7 @@ use std::io::{Read, Result, Write};
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(transparent)]
 pub struct Loc {
-    pub alltexts: IndexMap<u32, IndexMap<String, String>>,
+    alltexts: IndexMap<u32, IndexMap<String, String>>,
 }
 
 impl Loc {
