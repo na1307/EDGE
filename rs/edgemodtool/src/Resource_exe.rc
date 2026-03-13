@@ -69,9 +69,9 @@ BEGIN
             VALUE "CompanyName", "Bluehill Inc."
             VALUE "FileDescription", "EdgeModTool CLI"
             VALUE "FileVersion", "1.0.0.0"
-            VALUE "InternalName", "EdgeModTool-Cli.exe"
+            VALUE "InternalName", "edgemodtool.exe"
             VALUE "LegalCopyright", "Copyright (C) 2026 Bluehill Inc. All rights reserved."
-            VALUE "OriginalFilename", "EdgeModTool-Cli.exe"
+            VALUE "OriginalFilename", "edgemodtool.exe"
             VALUE "ProductName", "EdgeModTool"
             VALUE "ProductVersion", "1.0.0.0"
         END

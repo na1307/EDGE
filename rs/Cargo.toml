@@ -1,13 +1,13 @@
 [workspace]
 resolver = "3"
 members = [
+    "edgemodtool",
     "edgemodtoolcore",
-    "EdgeModTool-Cli",
 ]
 
 [workspace.dependencies]
 byteorder = "1.5.0"
-clap = "4.5.60"
+clap = "4.6.0"
 embed-resource = "3.0.6"
 indexmap = "2.13.0"
 serde = "1.0.228"

@@ -1,5 +1,5 @@
-use EdgeModTool_Cli::*;
 use clap::Parser;
+use edgemodtool::*;
 
 fn main() {
     let cli = Cli::parse();
