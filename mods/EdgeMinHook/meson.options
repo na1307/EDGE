@@ -1,1 +1,1 @@
-option('vcpkg_triplet', type : 'string', value : 'x86-windows-static-md-custom')
+option('vcpkg_triplet', type : 'string', value : 'x86-windows-static-custom')

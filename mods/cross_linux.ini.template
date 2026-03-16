@@ -2,7 +2,7 @@
 xwin_path = '/your/xwin/splat/path'
 msvc_includes = ['/imsvc', xwin_path / 'crt/include', '/imsvc', xwin_path / 'sdk/include/shared', '/imsvc', xwin_path / 'sdk/include/ucrt', '/imsvc', xwin_path / 'sdk/include/um']
 msvc_libs = ['/libpath:' + xwin_path / 'crt/lib/x86', '/libpath:' + xwin_path / 'sdk/lib/ucrt/x86', '/libpath:' + xwin_path / 'sdk/lib/um/x86']
-vcpkg_triplet = 'x86-windows-static-md-linuxcross'
+vcpkg_triplet = 'x86-windows-static-linuxcross'
 
 [binaries]
 # We need to add msvc_includes to here instead c_args to avoid "Could not determine vs dep dependency prefix string." error
@@ -10,7 +10,7 @@ c = ['clang-cl', '-m32', '-msse3', '-fuse-ld=lld', '--target=i686-pc-windows-msv
 cpp = ['clang-cl', '-m32', '-msse3', '-fuse-ld=lld', '--target=i686-pc-windows-msvc'] + msvc_includes
 ar = 'llvm-lib'
 strip = 'llvm-strip'
-rc = 'llvm-rc'
+windres = 'llvm-rc'
 
 [built-in options]
 c_link_args = msvc_libs

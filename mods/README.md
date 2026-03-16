@@ -17,13 +17,13 @@ The following commands are assumed to be run from the Visual Studio Developer Co
 First of all, you need to install the vcpkg packages for `EdgeMinHook`.
 
 ```
-vcpkg install --triplet=x86-windows-static-md-custom
+vcpkg install --triplet=x86-windows-static-custom
 ```
 
 If you want to use Clang, type this instead:
 
 ```
-vcpkg install --triplet=x86-windows-static-md-custom-clang
+vcpkg install --triplet=x86-windows-static-custom-clang
 ```
 
 > **Important**: If you used Clang in the vcpkg step, you must also use Clang in the meson step. Similarly, if you used MSVC in the vcpkg step, you must also use MSVC in the meson step.
@@ -88,7 +88,7 @@ Copy the cross_linux.ini.template file to cross_linux.ini and copy the windows-l
 Then you need to install the vcpkg packages.
 
 ```
-vcpkg install --triplet=x86-windows-static-md-linuxcross
+vcpkg install --triplet=x86-windows-static-linuxcross
 ```
 
 Set the build directory by entering the following command:

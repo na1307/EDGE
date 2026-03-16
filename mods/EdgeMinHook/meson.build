@@ -11,6 +11,7 @@ if bt == 'debug'
     add_project_link_arguments('/incremental', language: ['c', 'cpp'])
     vcpkg_libdir = meson.current_source_dir() / 'vcpkg_installed' / vcpkg_triplet / 'debug' / 'lib'
     d = 'd'
+    vscrt = 'mtd'
 elif bt == 'release'
     add_project_arguments('/DNDEBUG', language: ['c', 'cpp'])
     add_project_link_arguments('/safeseh', '/opt:icf', language: ['c', 'cpp'])
@@ -24,6 +25,7 @@ elif bt == 'release'
 
     vcpkg_libdir = meson.current_source_dir() / 'vcpkg_installed' / vcpkg_triplet / 'lib'
     d = ''
+    vscrt = 'mt'
 endif
 
 add_project_arguments('/DWIN32', '/DEDGEMINHOOK_EXPORTS', '/D_WINDOWS', '/D_USRDLL', '/D_WINDLL', '/D_UNICODE', '/DUNICODE', '/Gd', language: ['c', 'cpp'])
@@ -45,6 +47,6 @@ windows = import('windows')
 
 resource = windows.compile_resources('src/Resource.rc')
 
-dll = shared_library('EdgeMinHook', [src, resource], include_directories: inc, dependencies: lib, win_subsystem: 'windows')
+dll = shared_library('EdgeMinHook', [src, resource], include_directories: inc, dependencies: lib, win_subsystem: 'windows', override_options: ['b_vscrt=' + vscrt])
 
 edgeminhook_dep = declare_dependency(include_directories: [edgeminhook_incdir], link_with: [dll])

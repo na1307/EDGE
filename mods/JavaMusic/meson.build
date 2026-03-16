@@ -8,6 +8,7 @@ bt = get_option('buildtype')
 if bt == 'debug'
     add_project_arguments('/D_DEBUG', language: ['c', 'cpp'])
     add_project_link_arguments('/incremental', language: ['c', 'cpp'])
+    vscrt = 'mtd'
 elif bt == 'release'
     add_project_arguments('/DNDEBUG', language: ['c', 'cpp'])
     add_project_link_arguments('/safeseh', '/opt:icf', language: ['c', 'cpp'])
@@ -18,6 +19,8 @@ elif bt == 'release'
     elif cpp_id == 'clang-cl'
         add_project_arguments('-flto=thin', language: ['c', 'cpp'])
     endif
+
+    vscrt = 'mt'
 endif
 
 add_project_arguments('/DWIN32', '/DJAVAMUSIC_EXPORTS', '/D_WINDOWS', '/D_USRDLL', '/D_WINDLL', '/D_UNICODE', '/DUNICODE', '/Gd', language: ['c', 'cpp'])
@@ -28,8 +31,8 @@ src = [
     'src/MidiPlayer.cpp',
 ]
 
-edgeminhook = dependency('EdgeMinHook', default_options: ['vcpkg_triplet=' + get_option('vcpkg_triplet')], fallback: ['EdgeMinHook', 'edgeminhook_dep'])
+edgeminhook = dependency('EdgeMinHook', default_options: ['vcpkg_triplet=' + get_option('vcpkg_triplet'), 'b_vscrt=' + vscrt], fallback: ['EdgeMinHook', 'edgeminhook_dep'])
 
 deps = [edgeminhook]
 
-shared_library('JavaMusic', src, dependencies: deps, name_suffix: 'asi', win_subsystem: 'windows')
+shared_library('JavaMusic', src, dependencies: deps, name_suffix: 'asi', win_subsystem: 'windows', override_options: ['b_vscrt=' + vscrt])
