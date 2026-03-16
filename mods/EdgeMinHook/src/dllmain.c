@@ -20,7 +20,10 @@ DWORD WINAPI EnableHooksThread(LPVOID lpParam) {
         }
 
         Sleep(100);
-        MH_EnableHook(MH_ALL_HOOKS);
+
+        if (MH_EnableHook(MH_ALL_HOOKS) != MH_OK) {
+            MessageBoxW(NULL, L"Failed to enable hooks", NULL, MB_OK);
+        }
     }
 }
 
@@ -30,6 +33,8 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
             DisableThreadLibraryCalls(hModule);
 
             if (MH_Initialize() != MH_OK) {
+                MessageBoxW(NULL, L"Failed to initialize EdgeMinHook", NULL, MB_OK);
+
                 return FALSE;
             }
 
@@ -52,6 +57,8 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
         case DLL_PROCESS_DETACH:
             if (lpReserved != NULL) {
                 if (MH_Uninitialize() != MH_OK) {
+                    MessageBoxW(NULL, L"Failed to uninitialize EdgeMinHook", NULL, MB_OK);
+
                     return FALSE;
                 }
 
