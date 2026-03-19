@@ -1,5 +1,6 @@
 set(VCPKG_TARGET_ARCHITECTURE x86)
 set(VCPKG_CRT_LINKAGE static)
 set(VCPKG_LIBRARY_LINKAGE static)
-set(VCPKG_LOAD_VCVARS_ENV ON)
+set(VCPKG_C_FLAGS "-m32 -msse3 -fuse-ld=lld --target=i686-pc-windows-msvc")
+set(VCPKG_CXX_FLAGS "-m32 -msse3 -fuse-ld=lld --target=i686-pc-windows-msvc")
 set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE ${CMAKE_CURRENT_LIST_DIR}/windows-custom.cmake)

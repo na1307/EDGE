@@ -1,8 +1,6 @@
 project('JavaMusic', 'cpp', default_options: ['c_std=c17', 'cpp_std=vc++20'], meson_version: '>=1.3')
 
 cpp = meson.get_compiler('cpp')
-cpp_id = cpp.get_id()
-
 bt = get_option('buildtype')
 
 if bt == 'debug'
@@ -10,16 +8,8 @@ if bt == 'debug'
     add_project_link_arguments('/incremental', language: ['c', 'cpp'])
     vscrt = 'mtd'
 elif bt == 'release'
-    add_project_arguments('/DNDEBUG', language: ['c', 'cpp'])
+    add_project_arguments('/DNDEBUG', '-flto=thin', language: ['c', 'cpp'])
     add_project_link_arguments('/safeseh', '/opt:icf', language: ['c', 'cpp'])
-
-    if cpp_id == 'msvc'
-        add_project_arguments('/GL', language: ['c', 'cpp'])
-        add_project_link_arguments('/LTCG:incremental', language: ['c', 'cpp'])
-    elif cpp_id == 'clang-cl'
-        add_project_arguments('-flto=thin', language: ['c', 'cpp'])
-    endif
-
     vscrt = 'mt'
 endif
 

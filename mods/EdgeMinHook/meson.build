@@ -1,8 +1,6 @@
 project('EdgeMinHook', 'c', default_options: ['c_std=c17', 'cpp_std=vc++20'], meson_version: '>=1.3')
 
 c = meson.get_compiler('c')
-c_id = c.get_id()
-
 bt = get_option('buildtype')
 vcpkg_triplet = get_option('vcpkg_triplet')
 
@@ -13,16 +11,8 @@ if bt == 'debug'
     d = 'd'
     vscrt = 'mtd'
 elif bt == 'release'
-    add_project_arguments('/DNDEBUG', language: ['c', 'cpp'])
+    add_project_arguments('/DNDEBUG', '-flto=thin', language: ['c', 'cpp'])
     add_project_link_arguments('/safeseh', '/opt:icf', language: ['c', 'cpp'])
-
-    if c_id == 'msvc'
-        add_project_arguments('/GL', language: ['c', 'cpp'])
-        add_project_link_arguments('/LTCG:incremental', language: ['c', 'cpp'])
-    elif c_id == 'clang-cl'
-        add_project_arguments('-flto=thin', language: ['c', 'cpp'])
-    endif
-
     vcpkg_libdir = meson.current_source_dir() / 'vcpkg_installed' / vcpkg_triplet / 'lib'
     d = ''
     vscrt = 'mt'

@@ -10,7 +10,8 @@ This directory contains several Mods.
 * [Meson](https://mesonbuild.com/) Build System
 * MSBuild or [Ninja](https://ninja-build.org/)
 * [vcpkg](https://vcpkg.io/)
-* The C++ Compiler (MSVC or Clang)
+* Visual C++ (2026 Recommended)
+* LLVM with Clang-CL compiler
 
 The following commands are assumed to be run from the Visual Studio Developer Command Prompt.
 
@@ -20,14 +21,6 @@ First of all, you need to install the vcpkg packages for `EdgeMinHook`.
 vcpkg install --triplet=x86-windows-static-custom
 ```
 
-If you want to use Clang, type this instead:
-
-```
-vcpkg install --triplet=x86-windows-static-custom-clang
-```
-
-> **Important**: If you used Clang in the vcpkg step, you must also use Clang in the meson step. Similarly, if you used MSVC in the vcpkg step, you must also use MSVC in the meson step.
-
 Then do any of the following:
 
 #### Using Visual Studio
@@ -35,26 +28,12 @@ Then do any of the following:
 Set the build directory by entering the following command:
 
 ```
-meson setup --backend=vs buildDir
+meson setup --backend=vs --native-file=../clang_win.ini buildDir
 ```
 
 Then open the generated solution in Visual Studio.
 
 #### Using Ninja
-
-Set the build directory by entering the following command:
-
-```
-meson setup --backend=ninja buildDir
-```
-
-To build, enter the following command:
-
-```
-meson compile -C buildDir
-```
-
-#### Using Ninja + Clang
 
 Set the build directory by entering the following command:
 
@@ -77,7 +56,7 @@ meson compile -C buildDir
 * [vcpkg](https://vcpkg.io/)
 * Clang-CL Compiler
 
-First, you need to get MSVC and Windows SDK via xwin.
+First, you need to get MSVC CRT and Windows SDK via xwin.
 
 ```
 xwin --arch x86 --accept-license splat --include-debug-libs --output <path>

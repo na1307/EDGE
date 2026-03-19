@@ -1,5 +1,8 @@
 if(NOT _VCPKG_WINDOWS_TOOLCHAIN)
     set(_VCPKG_WINDOWS_TOOLCHAIN 1)
+    set(CMAKE_C_COMPILER "C:\\Program Files\\LLVM\\bin\\clang-cl.exe")
+    set(CMAKE_CXX_COMPILER "C:\\Program Files\\LLVM\\bin\\clang-cl.exe")
+    set(CMAKE_RC_COMPILER "C:\\\\Program Files\\\\LLVM\\\\bin\\\\llvm-rc.exe")
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>$<$<STREQUAL:${VCPKG_CRT_LINKAGE},dynamic>:DLL>" CACHE STRING "")
     set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "")
 
