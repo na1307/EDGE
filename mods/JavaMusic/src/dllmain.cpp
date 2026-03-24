@@ -40,7 +40,7 @@ void FUN_00474fa0(void *unknown, char *value) {
     levelPath = wss.str();
     isMenu = false;
 
-    (*org474fa0)(unknown, value);
+    org474fa0(unknown, value);
 }
 
 void __thiscall FUN_00481590(void *me, unsigned int, bool isDebrief) {
@@ -52,24 +52,26 @@ void __thiscall FUN_00481590(void *me, unsigned int, bool isDebrief) {
     levelFile.close();
 
     if (!isDebrief) {
-        (*org481590)(me, isMenu ? 0 : musicJava, isDebrief);
+        org481590(me, isMenu ? 0 : musicJava, isDebrief);
     }
 }
 
 void __fastcall FUN_004b6a60(void *unknown) {
     isMenu = true;
 
-    (*org4b6a60)(unknown);
+    org4b6a60(unknown);
 }
 
 void __fastcall FUN_004ba240(void *unknown) {
     isMenu = true;
 
-    (*org4ba240)(unknown);
+    org4ba240(unknown);
 }
 
-BOOL APIENTRY DllMain(HMODULE, DWORD ul_reason_for_call, LPVOID) {
+BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID) {
     if (ul_reason_for_call == DLL_PROCESS_ATTACH) {
+        DisableThreadLibraryCalls(hModule);
+
         wchar_t buffer[256];
 
         if (GetModuleFileNameW(nullptr, buffer, sizeof(buffer)) == 0) {
@@ -85,11 +87,11 @@ BOOL APIENTRY DllMain(HMODULE, DWORD ul_reason_for_call, LPVOID) {
 
         baseDir = ws;
 
-        RegisterEdgeHook(reinterpret_cast<LPVOID>(0x474160), reinterpret_cast<LPVOID>(&FUN_00474160), nullptr);
-        RegisterEdgeHook(reinterpret_cast<LPVOID>(0x474fa0), reinterpret_cast<LPVOID>(&FUN_00474fa0), reinterpret_cast<LPVOID*>(&org474fa0));
-        RegisterEdgeHook(reinterpret_cast<LPVOID>(0x481590), reinterpret_cast<LPVOID>(&FUN_00481590), reinterpret_cast<LPVOID*>(&org481590));
-        RegisterEdgeHook(reinterpret_cast<LPVOID>(0x4b6a60), reinterpret_cast<LPVOID>(&FUN_004b6a60), reinterpret_cast<LPVOID*>(&org4b6a60));
-        RegisterEdgeHook(reinterpret_cast<LPVOID>(0x4ba240), reinterpret_cast<LPVOID>(&FUN_004ba240), reinterpret_cast<LPVOID*>(&org4ba240));
+        RegisterEdgeHook(reinterpret_cast<LPVOID>(0x474160), reinterpret_cast<LPVOID>(FUN_00474160), nullptr);
+        RegisterEdgeHook(reinterpret_cast<LPVOID>(0x474fa0), reinterpret_cast<LPVOID>(FUN_00474fa0), reinterpret_cast<LPVOID*>(&org474fa0));
+        RegisterEdgeHook(reinterpret_cast<LPVOID>(0x481590), reinterpret_cast<LPVOID>(FUN_00481590), reinterpret_cast<LPVOID*>(&org481590));
+        RegisterEdgeHook(reinterpret_cast<LPVOID>(0x4b6a60), reinterpret_cast<LPVOID>(FUN_004b6a60), reinterpret_cast<LPVOID*>(&org4b6a60));
+        RegisterEdgeHook(reinterpret_cast<LPVOID>(0x4ba240), reinterpret_cast<LPVOID>(FUN_004ba240), reinterpret_cast<LPVOID*>(&org4ba240));
     }
 
     return TRUE;
