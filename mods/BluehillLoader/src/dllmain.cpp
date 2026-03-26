@@ -8,18 +8,14 @@ typedef void (__thiscall *sub_474160_t)(void *, int);
 typedef void (*sub_4A63F0_t)();
 typedef void (__cdecl *sub_4A75F0_t)(int);
 
-constexpr char mods_font_bin[] = "mods/font.bin";
 std::string mods_root("mods/");
+constexpr char mods_font_bin[] = "mods/font.bin";
+constexpr char mods_localization_text_loc[] = "mods/localization/text.loc";
 malloc_t malloc_msvcr100 = nullptr;
-auto sub_44A490 = reinterpret_cast<bool (__cdecl *)(std::string *, const char *)>(0x44a490);
 auto sub_473E60 = reinterpret_cast<const char*(__cdecl *)(int)>(0x473e60);
 sub_474160_t org474160 = nullptr;
-auto sub_49BBF0 = reinterpret_cast<const char*(__cdecl *)(int)>(0x49bbf0);
 sub_4A63F0_t org4A63F0 = nullptr;
 sub_4A75F0_t org4A75F0 = nullptr;
-auto sub_4F17C0 = reinterpret_cast<bool (__thiscall *)(void *, std::string *)>(0x4f17c0);
-auto sub_4F21B0 = reinterpret_cast<short (__thiscall *)(void *, std::string *)>(0x4f21b0);
-auto sub_4F2760 = reinterpret_cast<void *(__thiscall *)(void *, std::string *, std::string *, bool)>(0x4f2760);
 
 inline bool file_exists(const std::string &path) {
     return std::filesystem::exists(path) && std::filesystem::is_regular_file(path);
@@ -66,33 +62,25 @@ void sub_4A63F0() {
 }
 
 void __cdecl sub_4A75F0(int lang_code) {
-    auto text_loc_path = mods_root;
+    static bool is_patched = false;
 
-    text_loc_path.append("localization/text.loc");
+    if (!is_patched && file_exists(mods_localization_text_loc)) {
+        const auto target_start = reinterpret_cast<LPVOID>(0x4a7606);
+        DWORD old_protect;
 
-    if (file_exists(text_loc_path)) {
-        if (!sub_44A490(&text_loc_path, nullptr)) {
-            org4A75F0(lang_code);
+        if (VirtualProtect(target_start, 10, PAGE_EXECUTE_READWRITE, &old_protect) != 0) {
+            constexpr uintptr_t size_addr = 0x4a7608;
+            constexpr uintptr_t string_addr = 0x4a760a;
+            *reinterpret_cast<unsigned char*>(size_addr) = static_cast<unsigned char>(sizeof(mods_localization_text_loc) - 1);
+            *reinterpret_cast<const char**>(string_addr) = mods_localization_text_loc;
 
-            return;
+            VirtualProtect(target_start, 10, old_protect, &old_protect);
+
+            is_patched = true;
         }
-
-        *reinterpret_cast<int*>(0x5f426c) = lang_code;
-        std::string lang_name(sub_49BBF0(lang_code));
-        const auto ptr = malloc_msvcr100(84);
-
-        if (ptr != nullptr) {
-            *reinterpret_cast<void**>(0x5f9220) = sub_4F2760(ptr, &text_loc_path, &lang_name, false);
-        }
-
-        if (!sub_4F17C0(ptr, &lang_name)) {
-            std::string en("en");
-
-            sub_4F21B0(ptr, &en);
-        }
-    } else {
-        org4A75F0(lang_code);
     }
+
+    org4A75F0(lang_code);
 }
 
 inline void initialize_failed() {
