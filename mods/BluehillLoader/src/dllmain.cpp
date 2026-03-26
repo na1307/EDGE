@@ -1,4 +1,5 @@
-﻿#include <windows.h>
+﻿// ReSharper disable CppTooWideScopeInitStatement
+#include <windows.h>
 #include <EdgeMinHook.h>
 #include <filesystem>
 
@@ -7,17 +8,15 @@ typedef void (__thiscall *sub_474160_t)(void *, int);
 typedef void (*sub_4A63F0_t)();
 typedef void (__cdecl *sub_4A75F0_t)(int);
 
+constexpr char mods_font_bin[] = "mods/font.bin";
 std::string mods_root("mods/");
 malloc_t malloc_msvcr100 = nullptr;
-auto sub_449E50 = reinterpret_cast<int (__cdecl *)(void *, void *, int)>(0x449e50);
 auto sub_44A490 = reinterpret_cast<bool (__cdecl *)(std::string *, const char *)>(0x44a490);
-auto sub_44A840 = reinterpret_cast<int *(__cdecl *)(int *, std::string *, int, int)>(0x44a840);
 auto sub_473E60 = reinterpret_cast<const char*(__cdecl *)(int)>(0x473e60);
 sub_474160_t org474160 = nullptr;
 auto sub_49BBF0 = reinterpret_cast<const char*(__cdecl *)(int)>(0x49bbf0);
 sub_4A63F0_t org4A63F0 = nullptr;
 sub_4A75F0_t org4A75F0 = nullptr;
-auto sub_4BA506 = reinterpret_cast<void *(__cdecl *)(unsigned int)>(0x4ba506);
 auto sub_4F17C0 = reinterpret_cast<bool (__thiscall *)(void *, std::string *)>(0x4f17c0);
 auto sub_4F21B0 = reinterpret_cast<short (__thiscall *)(void *, std::string *)>(0x4f21b0);
 auto sub_4F2760 = reinterpret_cast<void *(__thiscall *)(void *, std::string *, std::string *, bool)>(0x4f2760);
@@ -45,15 +44,25 @@ void __thiscall sub_474160(void *thisptr, int music) {
 }
 
 void sub_4A63F0() {
-    auto font_bin_path = mods_root;
+    static bool is_patched = false;
 
-    font_bin_path.append("font.bin");
+    if (!is_patched && file_exists(mods_font_bin)) {
+        const auto target_start = reinterpret_cast<LPVOID>(0x4a6402);
+        DWORD old_protect;
 
-    if (file_exists(font_bin_path)) {
-        org4A63F0();
-    } else {
-        org4A63F0();
+        if (VirtualProtect(target_start, 10, PAGE_EXECUTE_READWRITE, &old_protect) != 0) {
+            constexpr uintptr_t size_addr = 0x4a6403;
+            constexpr uintptr_t string_addr = 0x4a6407;
+            *reinterpret_cast<unsigned char*>(size_addr) = static_cast<unsigned char>(sizeof(mods_font_bin) - 1);
+            *reinterpret_cast<const char**>(string_addr) = mods_font_bin;
+
+            VirtualProtect(target_start, 10, old_protect, &old_protect);
+
+            is_patched = true;
+        }
     }
+
+    org4A63F0();
 }
 
 void __cdecl sub_4A75F0(int lang_code) {
