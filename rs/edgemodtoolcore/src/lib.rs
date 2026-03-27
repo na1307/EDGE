@@ -1,6 +1,7 @@
 #[macro_use]
 mod macros;
 pub mod compiler;
+pub mod loader;
 pub mod loc;
 pub mod mod_definition;
 pub mod profiles;
@@ -36,6 +37,38 @@ extern "C" fn decompile_text_loc(text_loc_path: *const c_char) -> i32 {
     };
 
     match compiler::decompile_text_loc(text_loc_path.into()) {
+        Ok(_) => 0,
+        Err(e) => e.0.into(),
+    }
+}
+
+#[unsafe(no_mangle)]
+extern "C" fn install_loader(profile: *const c_char) -> i32 {
+    if profile.is_null() {
+        return -1;
+    }
+
+    let Ok(profile) = unsafe { CStr::from_ptr(profile) }.to_str() else {
+        return -2;
+    };
+
+    match loader::install_loader(Some(&profile.to_string())) {
+        Ok(_) => 0,
+        Err(e) => e.0.into(),
+    }
+}
+
+#[unsafe(no_mangle)]
+extern "C" fn uninstall_loader(profile: *const c_char) -> i32 {
+    if profile.is_null() {
+        return -1;
+    }
+
+    let Ok(profile) = unsafe { CStr::from_ptr(profile) }.to_str() else {
+        return -2;
+    };
+
+    match loader::uninstall_loader(Some(&profile.to_string())) {
         Ok(_) => 0,
         Err(e) => e.0.into(),
     }

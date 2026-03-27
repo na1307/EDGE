@@ -165,7 +165,7 @@ fn get_profile_json_path() -> std::io::Result<PathBuf> {
     Ok(profile_json)
 }
 
-fn read_profile_json() -> std::io::Result<Profiles> {
+pub fn read_profile_json() -> std::io::Result<Profiles> {
     let file = File::open(&get_profile_json_path()?)?;
     let br = BufReader::new(file);
     let profiles = Profiles::from_json(br)?;

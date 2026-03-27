@@ -23,12 +23,12 @@ pub enum Commands {
     /// Install the mod loader
     InstallLoader {
         /// profile name
-        profile: String,
+        profile: Option<String>,
     },
     /// Uninstall the mod loader
     UninstallLoader {
         /// profile name
-        profile: String,
+        profile: Option<String>,
     },
     /// Install a mod
     Install {
