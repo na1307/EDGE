@@ -2,6 +2,6 @@
 
 This repository contains:
 
-* [EdgeModTool-GUI](./EdgeModTool)
-* [EdgeModTool-CLI and Core Logic](./rs)
+* [EdgeModTool CLI and Core Logic](./rs)
+* [EdgeModTool GUI](./EdgeModTool.Gui)
 * [Bunch of Mods](./mods)

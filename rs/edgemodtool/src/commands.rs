@@ -20,6 +20,16 @@ pub enum Commands {
         /// File path
         path: PathBuf,
     },
+    /// Install the mod loader
+    InstallLoader {
+        /// profile name
+        profile: String,
+    },
+    /// Uninstall the mod loader
+    UninstallLoader {
+        /// profile name
+        profile: String,
+    },
     /// Install a mod
     Install {
         /// Mod path

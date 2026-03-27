@@ -73,7 +73,7 @@ BEGIN
             VALUE "LegalCopyright", "Copyright (C) 2026 Bluehill Inc. All rights reserved."
             VALUE "OriginalFilename", "edgemodtool.exe"
             VALUE "ProductName", "EdgeModTool"
-            VALUE "ProductVersion", "1.0.0.0"
+            VALUE "ProductVersion", "1.0"
         END
     END
     BLOCK "VarFileInfo"

@@ -7,6 +7,8 @@ fn main() {
     let result = match cli.command {
         Commands::Compile { path } => compile_command(path),
         Commands::Decompile { path } => decompile_command(path),
+        Commands::InstallLoader { profile } => Ok(()),
+        Commands::UninstallLoader { profile } => Ok(()),
         Commands::Install { path, profile } => Ok(()),
         Commands::Uninstall { modname, profile } => Ok(()),
         Commands::Profile { command } => match command {

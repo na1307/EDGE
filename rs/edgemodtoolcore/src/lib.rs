@@ -1,82 +1,112 @@
+#[macro_use]
+mod macros;
+pub mod compiler;
 pub mod loc;
 pub mod mod_definition;
 pub mod profiles;
 
-use crate::loc::Loc;
 use std::ffi::{CStr, c_char};
-use std::fs::File;
-use std::io::{BufReader, BufWriter};
+use std::path::PathBuf;
+use std::str::FromStr;
 
 #[unsafe(no_mangle)]
-extern "C" fn decompile_text_loc(text_loc_path: *const c_char, json_path: *const c_char) -> i32 {
-    if text_loc_path.is_null() || json_path.is_null() {
+extern "C" fn compile_text_loc(json_path: *const c_char) -> i32 {
+    if json_path.is_null() {
         return -1;
     }
 
-    let Ok(text_loc_path) = unsafe { CStr::from_ptr(text_loc_path) }.to_str() else {
-        return 1;
-    };
-
-    let Ok(f1) = File::open(text_loc_path) else {
-        return 2;
-    };
-
-    let br = BufReader::new(f1);
-
-    let Ok(loc) = Loc::from_text_loc(br) else {
-        return 3;
-    };
-
     let Ok(json_path) = unsafe { CStr::from_ptr(json_path) }.to_str() else {
-        return 1;
+        return -2;
     };
 
-    let Ok(f2) = File::create(json_path) else {
-        return 2;
-    };
-
-    let bw = BufWriter::new(f2);
-
-    if loc.save_json(bw).is_err() {
-        return 3;
+    match compiler::compile_text_loc(json_path.into()) {
+        Ok(_) => 0,
+        Err(e) => e.0.into(),
     }
-
-    0
 }
 
 #[unsafe(no_mangle)]
-extern "C" fn compile_text_loc(json_path: *const c_char, text_loc_path: *const c_char) -> i32 {
-    if json_path.is_null() || text_loc_path.is_null() {
+extern "C" fn decompile_text_loc(text_loc_path: *const c_char) -> i32 {
+    if text_loc_path.is_null() {
         return -1;
     }
 
-    let Ok(json_path) = unsafe { CStr::from_ptr(json_path) }.to_str() else {
-        return 1;
-    };
-
-    let Ok(f1) = File::open(json_path) else {
-        return 2;
-    };
-
-    let br = BufReader::new(f1);
-
-    let Ok(loc) = Loc::from_json(br) else {
-        return 3;
-    };
-
     let Ok(text_loc_path) = unsafe { CStr::from_ptr(text_loc_path) }.to_str() else {
-        return 1;
+        return -2;
     };
 
-    let Ok(f2) = File::create(text_loc_path) else {
-        return 2;
+    match compiler::decompile_text_loc(text_loc_path.into()) {
+        Ok(_) => 0,
+        Err(e) => e.0.into(),
+    }
+}
+
+#[unsafe(no_mangle)]
+extern "C" fn add_profile(name: *const c_char, path: *const c_char) -> i32 {
+    if name.is_null() || path.is_null() {
+        return -1;
+    }
+
+    let Ok(name) = unsafe { CStr::from_ptr(name) }.to_str() else {
+        return -2;
     };
 
-    let bw = BufWriter::new(f2);
-
-    if loc.save_text_loc(bw).is_err() {
-        return 3;
+    let Ok(path) = unsafe { CStr::from_ptr(path) }.to_str() else {
+        return -2;
     };
 
-    0
+    let path = PathBuf::from_str(path).unwrap();
+
+    match profiles::add_profile(name, &path) {
+        Ok(_) => 0,
+        Err(e) => e.0.into(),
+    }
+}
+
+#[unsafe(no_mangle)]
+extern "C" fn remove_profile(name: *const c_char) -> i32 {
+    if name.is_null() {
+        return -1;
+    }
+
+    let Ok(name) = unsafe { CStr::from_ptr(name) }.to_str() else {
+        return -2;
+    };
+
+    match profiles::remove_profile(name) {
+        Ok(_) => 0,
+        Err(e) => e.0.into(),
+    }
+}
+
+#[unsafe(no_mangle)]
+extern "C" fn default_profile(name: *const c_char) -> i32 {
+    if name.is_null() {
+        return -1;
+    }
+
+    let Ok(name) = unsafe { CStr::from_ptr(name) }.to_str() else {
+        return -2;
+    };
+
+    match profiles::default_profile(name) {
+        Ok(_) => 0,
+        Err(e) => e.0.into(),
+    }
+}
+
+#[unsafe(no_mangle)]
+extern "C" fn launch(profile: *const c_char) -> i32 {
+    if profile.is_null() {
+        return -1;
+    }
+
+    let Ok(profile) = unsafe { CStr::from_ptr(profile) }.to_str() else {
+        return -2;
+    };
+
+    match profiles::launch(Some(&profile.to_string())) {
+        Ok(_) => 0,
+        Err(e) => e.0.into(),
+    }
 }
