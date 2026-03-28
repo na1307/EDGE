@@ -15,3 +15,6 @@ sevenz-rust.workspace = true
 skia-safe.workspace = true
 unrar.workspace = true
 zip.workspace = true
+
+[build-dependencies]
+embed-resource.workspace = true

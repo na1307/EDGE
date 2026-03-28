@@ -1,12 +1,14 @@
+#![allow(clippy::enum_variant_names)]
+
 #[macro_use]
 mod macros;
-pub mod compiler;
-pub mod loader;
-pub mod loc;
-pub mod mod_definition;
-pub mod profiles;
+mod compiler;
+mod loader;
+mod loc;
+mod mod_definition;
+mod profiles;
 
-use crate::profiles::read_profile_json;
+use profiles::read_profile_json;
 use std::ffi::{CStr, CString, c_char};
 use std::path::PathBuf;
 use std::str::FromStr;
@@ -23,7 +25,7 @@ extern "C" fn compile_text_loc(json_path: *const c_char) -> i32 {
 
     match compiler::compile_text_loc(json_path.into()) {
         Ok(_) => 0,
-        Err(e) => e.0.into(),
+        Err(e) => e.into(),
     }
 }
 
@@ -39,7 +41,7 @@ extern "C" fn decompile_text_loc(text_loc_path: *const c_char) -> i32 {
 
     match compiler::decompile_text_loc(text_loc_path.into()) {
         Ok(_) => 0,
-        Err(e) => e.0.into(),
+        Err(e) => e.into(),
     }
 }
 
@@ -55,7 +57,7 @@ extern "C" fn install_loader(profile: *const c_char) -> i32 {
 
     match loader::install_loader(profile) {
         Ok(_) => 0,
-        Err(e) => e.0.into(),
+        Err(e) => e.into(),
     }
 }
 
@@ -71,7 +73,7 @@ extern "C" fn uninstall_loader(profile: *const c_char) -> i32 {
 
     match loader::uninstall_loader(profile) {
         Ok(_) => 0,
-        Err(e) => e.0.into(),
+        Err(e) => e.into(),
     }
 }
 
@@ -93,7 +95,7 @@ extern "C" fn add_profile(name: *const c_char, path: *const c_char) -> i32 {
 
     match profiles::add_profile(name, &path) {
         Ok(_) => 0,
-        Err(e) => e.0.into(),
+        Err(e) => e.into(),
     }
 }
 
@@ -109,7 +111,7 @@ extern "C" fn remove_profile(name: *const c_char) -> i32 {
 
     match profiles::remove_profile(name) {
         Ok(_) => 0,
-        Err(e) => e.0.into(),
+        Err(e) => e.into(),
     }
 }
 
@@ -125,7 +127,7 @@ extern "C" fn default_profile(name: *const c_char) -> i32 {
 
     match profiles::default_profile(name) {
         Ok(_) => 0,
-        Err(e) => e.0.into(),
+        Err(e) => e.into(),
     }
 }
 
@@ -164,7 +166,7 @@ extern "C" fn launch(profile: *const c_char) -> i32 {
 
     match profiles::launch(Some(&profile.to_string())) {
         Ok(_) => 0,
-        Err(e) => e.0.into(),
+        Err(e) => e.into(),
     }
 }
 

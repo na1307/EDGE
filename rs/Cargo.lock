@@ -353,6 +353,7 @@ name = "edgemodtoolcore"
 version = "1.0.0"
 dependencies = [
  "byteorder",
+ "embed-resource",
  "indexmap",
  "serde",
  "serde_json",

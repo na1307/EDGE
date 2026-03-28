@@ -74,23 +74,20 @@ define_errors_enum! {
     ProfileDoesNotExist = 5,
 }
 
-pub fn add_profile(name: &str, path: &Path) -> Result<(), (ProfilesErrors, String)> {
+pub fn add_profile(name: &str, path: &Path) -> Result<(), ProfilesErrors> {
     if !path.exists() {
-        return Err((ProfilesErrors::PathDoesNotExist, format!("The path {} does not exist.", path.display())));
+        return Err(ProfilesErrors::PathDoesNotExist);
     }
 
     if !path.is_file() {
-        return Err((ProfilesErrors::NotAFile, format!("The path {} is not a file.", path.display())));
+        return Err(ProfilesErrors::NotAFile);
     }
 
     if !path.ends_with("edge.exe") {
-        return Err((
-            ProfilesErrors::NotAValidEdgeExecutable,
-            format!("The path {} is not a valid EDGE executable.", path.display()),
-        ));
+        return Err(ProfilesErrors::NotAValidEdgeExecutable);
     }
 
-    let profile_json = get_profile_json_path().map_err(handle_io_errors)?;
+    let profile_json = get_profile_json_path().map_err(|_| ProfilesErrors::IOError)?;
 
     if !profile_json.exists() {
         write(
@@ -100,48 +97,48 @@ pub fn add_profile(name: &str, path: &Path) -> Result<(), (ProfilesErrors, Strin
     "profiles": {}
 }"#,
         )
-        .map_err(handle_io_errors)?;
+        .map_err(|_| ProfilesErrors::IOError)?;
     }
 
-    let mut profiles = read_profile_json().map_err(handle_io_errors)?;
+    let mut profiles = read_profile_json().map_err(|_| ProfilesErrors::IOError)?;
     let current_count = profiles.get_count();
 
     profiles.add_or_modify_profile(name, path.into());
 
     if current_count == 0 {
-        profiles.set_default(name).map_err(handle_profile_errors)?;
+        profiles.set_default(name)?;
     }
 
-    write_profile_json(profiles).map_err(handle_io_errors)?;
+    write_profile_json(profiles).map_err(|_| ProfilesErrors::IOError)?;
 
     Ok(())
 }
 
-pub fn remove_profile(name: &str) -> Result<(), (ProfilesErrors, String)> {
-    let mut profiles = read_profile_json().map_err(handle_io_errors)?;
+pub fn remove_profile(name: &str) -> Result<(), ProfilesErrors> {
+    let mut profiles = read_profile_json().map_err(|_| ProfilesErrors::IOError)?;
 
-    profiles.remove_profile(name).map_err(handle_profile_errors)?;
+    profiles.remove_profile(name)?;
 
     if profiles.get_count() == 0 {
-        profiles.set_default("").map_err(handle_profile_errors)?;
+        profiles.set_default("")?;
     }
 
-    write_profile_json(profiles).map_err(handle_io_errors)?;
+    write_profile_json(profiles).map_err(|_| ProfilesErrors::IOError)?;
 
     Ok(())
 }
 
-pub fn default_profile(name: &str) -> Result<(), (ProfilesErrors, String)> {
-    let mut profiles = read_profile_json().map_err(handle_io_errors)?;
+pub fn default_profile(name: &str) -> Result<(), ProfilesErrors> {
+    let mut profiles = read_profile_json().map_err(|_| ProfilesErrors::IOError)?;
 
-    profiles.set_default(name).map_err(handle_profile_errors)?;
-    write_profile_json(profiles).map_err(handle_io_errors)?;
+    profiles.set_default(name)?;
+    write_profile_json(profiles).map_err(|_| ProfilesErrors::IOError)?;
 
     Ok(())
 }
 
-pub fn launch(profile: Option<&String>) -> Result<(), (ProfilesErrors, String)> {
-    let profiles = read_profile_json().map_err(handle_io_errors)?;
+pub fn launch(profile: Option<&String>) -> Result<(), ProfilesErrors> {
+    let profiles = read_profile_json().map_err(|_| ProfilesErrors::IOError)?;
 
     let profile = if let Some(profile) = profile {
         profile.to_string()
@@ -149,9 +146,9 @@ pub fn launch(profile: Option<&String>) -> Result<(), (ProfilesErrors, String)> 
         profiles.get_default().to_string()
     };
 
-    let edgeexe = profiles.get_path_for_profile(&profile).map_err(handle_profile_errors)?;
+    let edgeexe = profiles.get_path_for_profile(&profile)?;
 
-    Command::new(edgeexe).spawn().map_err(handle_io_errors)?;
+    Command::new(edgeexe).spawn().map_err(|_| ProfilesErrors::IOError)?;
 
     Ok(())
 }
@@ -180,12 +177,4 @@ fn write_profile_json(profiles: Profiles) -> std::io::Result<()> {
     profiles.save_json(bw)?;
 
     Ok(())
-}
-
-fn handle_profile_errors(err: ProfilesErrors) -> (ProfilesErrors, String) {
-    (err, format!("{:?}", err))
-}
-
-fn handle_io_errors(err: std::io::Error) -> (ProfilesErrors, String) {
-    (ProfilesErrors::IOError, err.to_string())
 }
