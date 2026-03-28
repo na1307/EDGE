@@ -164,7 +164,7 @@ extern "C" fn launch(profile: *const c_char) -> i32 {
         return -2;
     };
 
-    match profiles::launch(Some(&profile.to_string())) {
+    match profiles::launch(profile) {
         Ok(_) => 0,
         Err(e) => e.into(),
     }

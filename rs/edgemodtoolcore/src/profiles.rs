@@ -137,16 +137,9 @@ pub fn default_profile(name: &str) -> Result<(), ProfilesErrors> {
     Ok(())
 }
 
-pub fn launch(profile: Option<&String>) -> Result<(), ProfilesErrors> {
+pub fn launch(profile: &str) -> Result<(), ProfilesErrors> {
     let profiles = read_profile_json().map_err(|_| ProfilesErrors::IOError)?;
-
-    let profile = if let Some(profile) = profile {
-        profile.to_string()
-    } else {
-        profiles.get_default().to_string()
-    };
-
-    let edgeexe = profiles.get_path_for_profile(&profile)?;
+    let edgeexe = profiles.get_path_for_profile(profile)?;
 
     Command::new(edgeexe).spawn().map_err(|_| ProfilesErrors::IOError)?;
 
