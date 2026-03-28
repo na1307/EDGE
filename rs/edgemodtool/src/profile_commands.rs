@@ -1,7 +1,15 @@
-use crate::Result;
-use edgemodtoolcore::profiles::*;
+use crate::{Result, get_default_profile_name};
+use std::ffi::{CString, c_char};
 use std::io::{Write, stdin, stdout};
 use std::path::PathBuf;
+
+#[link(name = "edgemodtoolcore.dll")]
+unsafe extern "C" {
+    fn add_profile(name: *const c_char, path: *const c_char) -> i32;
+    fn remove_profile(name: *const c_char) -> i32;
+    fn default_profile(name: *const c_char) -> i32;
+    fn launch(profile: *const c_char) -> i32;
+}
 
 pub fn add_profile_command(name: Option<String>, path: Option<PathBuf>) -> Result<()> {
     let name = if let Some(name) = name {
@@ -34,7 +42,12 @@ pub fn add_profile_command(name: Option<String>, path: Option<PathBuf>) -> Resul
         buffer.trim().to_string().into()
     };
 
-    add_profile(&name, &path).map_err(handle_errors)?;
+    unsafe {
+        let name = CString::new(name.clone()).unwrap();
+        let path = CString::new(path.to_str().unwrap()).unwrap();
+
+        handle_error_code(add_profile(name.as_ptr(), path.as_ptr()))?;
+    }
 
     println!("Successfully added/modified profile {}.", name);
 
@@ -42,7 +55,11 @@ pub fn add_profile_command(name: Option<String>, path: Option<PathBuf>) -> Resul
 }
 
 pub fn remove_profile_command(name: String) -> Result<()> {
-    remove_profile(&name).map_err(handle_errors)?;
+    unsafe {
+        let name = CString::new(name.clone()).unwrap();
+
+        handle_error_code(remove_profile(name.as_ptr()))?;
+    }
 
     println!("Successfully removed profile {}.", name);
 
@@ -50,7 +67,11 @@ pub fn remove_profile_command(name: String) -> Result<()> {
 }
 
 pub fn default_profile_command(name: String) -> Result<()> {
-    default_profile(&name).map_err(handle_errors)?;
+    unsafe {
+        let name = CString::new(name.clone()).unwrap();
+
+        handle_error_code(default_profile(name.as_ptr()))?;
+    }
 
     println!("Setting default profile: {}", name);
 
@@ -58,17 +79,27 @@ pub fn default_profile_command(name: String) -> Result<()> {
 }
 
 pub fn launch_command(profile: Option<String>) -> Result<()> {
-    if let Some(profile) = &profile {
-        println!("Launching profile '{}'", profile);
-    } else {
-        println!("Launching default profile");
-    }
+    let profile = get_default_profile_name(profile)?;
 
-    launch(profile.as_ref()).map_err(handle_errors)?;
+    println!("Launching profile '{}'", profile);
+
+    unsafe {
+        let profile = CString::new(profile).unwrap();
+
+        handle_error_code(launch(profile.as_ptr()))?;
+    }
 
     Ok(())
 }
 
-fn handle_errors(e: (ProfilesErrors, String)) -> String {
-    e.1
+fn handle_error_code(code: i32) -> Result<()> {
+    match code {
+        0 => Ok(()),
+        1 => Err("The provided path does not exist.".to_string()),
+        2 => Err("The provided path is not a file.".to_string()),
+        3 => Err("The provided path is not a valid EDGE executable.".to_string()),
+        4 => Err("IO Error.".to_string()),
+        5 => Err("Profile does not exist.".to_string()),
+        _ => Err(format!("Unknown Error ({}).", code)),
+    }
 }

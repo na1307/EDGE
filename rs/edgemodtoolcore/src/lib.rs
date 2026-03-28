@@ -6,7 +6,8 @@ pub mod loc;
 pub mod mod_definition;
 pub mod profiles;
 
-use std::ffi::{CStr, c_char};
+use crate::profiles::read_profile_json;
+use std::ffi::{CStr, CString, c_char};
 use std::path::PathBuf;
 use std::str::FromStr;
 
@@ -52,7 +53,7 @@ extern "C" fn install_loader(profile: *const c_char) -> i32 {
         return -2;
     };
 
-    match loader::install_loader(Some(&profile.to_string())) {
+    match loader::install_loader(profile) {
         Ok(_) => 0,
         Err(e) => e.0.into(),
     }
@@ -68,7 +69,7 @@ extern "C" fn uninstall_loader(profile: *const c_char) -> i32 {
         return -2;
     };
 
-    match loader::uninstall_loader(Some(&profile.to_string())) {
+    match loader::uninstall_loader(profile) {
         Ok(_) => 0,
         Err(e) => e.0.into(),
     }
@@ -129,6 +130,29 @@ extern "C" fn default_profile(name: *const c_char) -> i32 {
 }
 
 #[unsafe(no_mangle)]
+extern "C" fn get_default_profile(name: *mut *mut c_char) -> i32 {
+    if name.is_null() {
+        return -1;
+    }
+
+    let Ok(profiles) = read_profile_json() else {
+        return -2;
+    };
+
+    let default = profiles.get_default();
+
+    let Ok(default) = CString::from_str(default) else {
+        return -3;
+    };
+
+    unsafe {
+        *name = default.into_raw();
+    }
+
+    0
+}
+
+#[unsafe(no_mangle)]
 extern "C" fn launch(profile: *const c_char) -> i32 {
     if profile.is_null() {
         return -1;
@@ -142,4 +166,17 @@ extern "C" fn launch(profile: *const c_char) -> i32 {
         Ok(_) => 0,
         Err(e) => e.0.into(),
     }
+}
+
+#[unsafe(no_mangle)]
+extern "C" fn delete_string(ptr: *mut c_char) -> i32 {
+    if ptr.is_null() {
+        return -1;
+    }
+
+    unsafe {
+        _ = CString::from_raw(ptr);
+    }
+
+    0
 }

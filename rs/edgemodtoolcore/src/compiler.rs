@@ -3,6 +3,14 @@ use std::fs::File;
 use std::io::{BufReader, BufWriter};
 use std::path::PathBuf;
 
+define_errors_enum! {
+    CompilerErrors;
+    OpenError = 1,
+    WriteError = 2,
+    SerializationError = 3,
+    CompileError = 4,
+}
+
 pub fn compile_text_loc(path: PathBuf) -> Result<(), (CompilerErrors, String)> {
     let text_json = File::open(&path).map_err(|err| (CompilerErrors::OpenError, err.to_string()))?;
     let br = BufReader::new(text_json);
@@ -23,12 +31,4 @@ pub fn decompile_text_loc(path: PathBuf) -> Result<(), (CompilerErrors, String)>
     let bw = BufWriter::new(text_json);
 
     loc.save_json(bw).map_err(|err| (CompilerErrors::CompileError, err.to_string()))
-}
-
-define_errors_enum! {
-    CompilerErrors;
-    OpenError = 1,
-    WriteError = 2,
-    SerializationError = 3,
-    CompileError = 4,
 }

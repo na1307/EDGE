@@ -16,16 +16,10 @@ define_errors_enum! {
     ProfileDoesNotExist = 7,
 }
 
-pub fn install_loader(profile: Option<&String>) -> Result<(), (LoaderErrors, String)> {
+pub fn install_loader(profile: &str) -> Result<(), (LoaderErrors, String)> {
     let profiles = read_profile_json().map_err(handle_io_errors)?;
 
-    let profile = if let Some(profile) = profile {
-        profile.to_string()
-    } else {
-        profiles.get_default().to_string()
-    };
-
-    let edgeexe = profiles.get_path_for_profile(&profile).map_err(|e| {
+    let edgeexe = profiles.get_path_for_profile(profile).map_err(|e| {
         if e == ProfilesErrors::ProfileDoesNotExist {
             (LoaderErrors::ProfileDoesNotExist, format!("{:?}", LoaderErrors::ProfileDoesNotExist))
         } else {
@@ -69,16 +63,10 @@ pub fn install_loader(profile: Option<&String>) -> Result<(), (LoaderErrors, Str
     Ok(())
 }
 
-pub fn uninstall_loader(profile: Option<&String>) -> Result<(), (LoaderErrors, String)> {
+pub fn uninstall_loader(profile: &str) -> Result<(), (LoaderErrors, String)> {
     let profiles = read_profile_json().map_err(handle_io_errors)?;
 
-    let profile = if let Some(profile) = profile {
-        profile.to_string()
-    } else {
-        profiles.get_default().to_string()
-    };
-
-    let edgeexe = profiles.get_path_for_profile(&profile).map_err(|e| {
+    let edgeexe = profiles.get_path_for_profile(profile).map_err(|e| {
         if e == ProfilesErrors::ProfileDoesNotExist {
             (LoaderErrors::ProfileDoesNotExist, format!("{:?}", LoaderErrors::ProfileDoesNotExist))
         } else {
