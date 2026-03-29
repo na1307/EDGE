@@ -1,10 +1,12 @@
 ﻿// ReSharper disable CppTooWideScopeInitStatement
+// ReSharper disable CppParameterMayBeConst
 #include <windows.h>
 #include <EdgeMinHook.h>
 #include <filesystem>
 
 typedef void* (__cdecl *malloc_t)(size_t);
 typedef void (__thiscall *sub_474160_t)(void *, int);
+typedef int (*sub_4947E0_t)();
 typedef void (*sub_4A63F0_t)();
 typedef void (__cdecl *sub_4A75F0_t)(int);
 
@@ -12,8 +14,9 @@ std::string mods_root("mods/");
 constexpr char mods_font_bin[] = "mods/font.bin";
 constexpr char mods_localization_text_loc[] = "mods/localization/text.loc";
 malloc_t malloc_msvcr100 = nullptr;
-auto sub_473E60 = reinterpret_cast<const char*(__cdecl *)(int)>(0x473e60);
+auto sub_473E60 = reinterpret_cast<const char* (__cdecl *)(int)>(0x473e60);
 sub_474160_t org474160 = nullptr;
+sub_4947E0_t org4947E0 = nullptr;
 sub_4A63F0_t org4A63F0 = nullptr;
 sub_4A75F0_t org4A75F0 = nullptr;
 
@@ -21,6 +24,7 @@ inline bool file_exists(const std::string &path) {
     return std::filesystem::exists(path) && std::filesystem::is_regular_file(path);
 }
 
+// Replace a music to mods
 void __thiscall sub_474160(void *thisptr, int music) {
     const auto music_name = sub_473E60(music);
     auto music_path = mods_root;
@@ -39,6 +43,15 @@ void __thiscall sub_474160(void *thisptr, int music) {
     }
 }
 
+// Bypass Bonus levels
+int sub_4947E0() {
+    const auto value = org4947E0();
+    *(*reinterpret_cast<bool**>(0x5f9080) + 724) = true;
+
+    return value;
+}
+
+// Replace font.bin to mods
 void sub_4A63F0() {
     static bool is_patched = false;
 
@@ -61,6 +74,7 @@ void sub_4A63F0() {
     org4A63F0();
 }
 
+// Replace text.loc to mods
 void __cdecl sub_4A75F0(int lang_code) {
     static bool is_patched = false;
 
@@ -109,6 +123,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID) {
 
         DisableThreadLibraryCalls(hModule);
         RegisterEdgeHook(reinterpret_cast<void*>(0x474160), reinterpret_cast<void*>(sub_474160), reinterpret_cast<void**>(&org474160));
+        RegisterEdgeHook(reinterpret_cast<void*>(0x4947e0), reinterpret_cast<void*>(sub_4947E0), reinterpret_cast<void**>(&org4947E0));
         RegisterEdgeHook(reinterpret_cast<void*>(0x4a63f0), reinterpret_cast<void*>(sub_4A63F0), reinterpret_cast<void**>(&org4A63F0));
         RegisterEdgeHook(reinterpret_cast<void*>(0x4a75f0), reinterpret_cast<void*>(sub_4A75F0), reinterpret_cast<void**>(&org4A75F0));
     }

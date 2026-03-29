@@ -147,12 +147,7 @@ pub fn launch(profile: &str) -> Result<(), ProfilesErrors> {
 }
 
 fn get_profile_json_path() -> std::io::Result<PathBuf> {
-    let profile_json = current_exe()?;
-    let mut profile_json = profile_json.parent().unwrap().to_path_buf();
-
-    profile_json.push("profile.json");
-
-    Ok(profile_json)
+    Ok(current_exe()?.with_file_name("profile.json"))
 }
 
 pub fn read_profile_json() -> std::io::Result<Profiles> {
