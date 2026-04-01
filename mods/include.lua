@@ -1,0 +1,60 @@
+option("asiextension", {default = true})
+
+toolchain("clang-cl-asi")
+    set_kind("standalone")
+
+    set_toolset("cc", "clang-cl")
+    set_toolset("cxx", "clang-cl")
+    set_toolset("ld", "lld-link")
+    set_toolset("sh", "lld-link")
+    set_toolset("ar", "llvm-ar")
+    set_toolset("mrc", "llvm-rc")
+    set_toolset("dlltool", "llvm-dlltool")
+    set_toolset("as", "llvm-ml")
+
+    on_check(function (toolchain)
+        return import("lib.detect.find_tool")("clang-cl")
+    end)
+
+    on_load(function (toolchain)
+        toolchain:add("cxflags", "-m32", "--target=i686-pc-windows-msvc")
+        toolchain:add("mxflags", "-m32", "--target=i686-pc-windows-msvc")
+        if is_mode("release") then
+            toolchain:add("cxflags", "-flto=thin")
+        end
+    end)
+
+rule("asi")
+    on_load(function (target)
+        target:set("kind", "shared")
+        if has_config("asiextension") then
+            target:set("extension", ".asi")
+        end
+        if is_mode("debug") then
+            target:set("runtimes", "MTd")
+        elseif is_mode("release") then
+            target:set("runtimes", "MT")
+        end
+        target:set("policy", "build.c++.modules", true)
+    end)
+
+    after_load(function (target)
+        if not target:values("windows.subsystem") then
+            target:values_set("windows.subsystem", "windows")
+        end
+
+        target:add("defines", "WIN32", "_WINDOWS", "_USRDLL", "_WINDLL", "_UNICODE", "UNICODE")
+        target:add("cxflags", "-Gd")
+        if is_mode("debug") then
+            target:add("defines", "DEBUG", "_DEBUG")
+        elseif is_mode("release") then
+            target:add("cxflags", "-Gw")
+        end
+
+        target:add("syslinks", "kernel32", "user32", "gdi32", "winspool", "comdlg32", "advapi32")
+        target:add("syslinks", "shell32", "ole32", "oleaut32", "uuid", "odbc32", "odbccp32", "comctl32")
+        target:add("syslinks", "comdlg32", "setupapi", "shlwapi")
+        if not target:is_plat("mingw") then
+            target:add("syslinks", "strsafe")
+        end
+    end)

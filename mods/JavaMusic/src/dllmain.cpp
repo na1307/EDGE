@@ -7,8 +7,6 @@
 #include "global.h"
 #include "MidiPlayer.h"
 
-#pragma comment(lib, "winmm.lib")
-
 typedef void (__thiscall*FUN_00474160_t)(void *, unsigned int);
 typedef void (*FUN_00474fa0_t)(void *, char *);
 typedef void (__thiscall*FUN_00481590_t)(void *, unsigned int, bool);

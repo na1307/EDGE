@@ -1,4 +1,6 @@
-.wraplock
-cross_linux.ini
-windows-linuxcross.cmake
-vcpkg_installed
+# Xmake cache
+.xmake/
+build/
+
+# MacOS Cache
+.DS_Store
