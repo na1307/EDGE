@@ -3,7 +3,7 @@ add_rules("mode.debug", "mode.release")
 set_defaultmode("debug")
 set_plat("windows")
 set_arch("x86")
-set_toolchains("clang-cl-asi")
+set_toolchains("clang-cl")
 set_languages("c17", "cxx23")
 set_config("asiextension", false)
 
@@ -13,7 +13,8 @@ elseif is_mode("release") then
     set_runtimes("MT")
 end
 
-add_requires("minhook", {plat = "windows", arch = "x86"})
+set_policy("build.optimization.lto", is_mode("release"))
+add_requires("minhook", {plat = "windows", arch = "x86", configs = {toolchains = "clang-cl-dependencies"}})
 
 target("EdgeMinHook")
     add_rules("asi")

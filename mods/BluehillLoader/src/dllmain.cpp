@@ -1,8 +1,8 @@
 ﻿// ReSharper disable CppTooWideScopeInitStatement
 // ReSharper disable CppParameterMayBeConst
 #include <windows.h>
-#include <EdgeMinHook.h>
-#include <filesystem>
+import EdgeMinHook;
+import std;
 
 typedef void* (__cdecl *malloc_t)(size_t);
 typedef void (__thiscall *sub_474160_t)(void *, int);

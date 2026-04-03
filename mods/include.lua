@@ -1,6 +1,6 @@
 option("asiextension", {default = true})
 
-toolchain("clang-cl-asi")
+toolchain("clang-cl-dependencies")
     set_kind("standalone")
 
     set_toolset("cc", "clang-cl")
@@ -36,6 +36,12 @@ rule("asi")
             target:set("runtimes", "MT")
         end
         target:set("policy", "build.c++.modules", true)
+        target:set("toolset", "mrc", "llvm-rc")
+        target:set("toolset", "ld", "lld-link")
+        target:set("toolset", "sh", "lld-link")
+        target:set("toolset", "ar", "llvm-ar")
+        target:set("toolset", "as", "llvm-ml")
+        target:add("shflags", "-machine:x86", {force = true})
     end)
 
     after_load(function (target)
