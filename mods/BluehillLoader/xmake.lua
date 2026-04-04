@@ -13,5 +13,5 @@ add_requires("edgeminhook", {plat = "windows", arch = "x86"})
 
 target("Bluehill's Loader")
     add_rules("asi")
-    add_files("src/dllmain.cpp", "src/EdgeMinHook.cppm")
+    add_files("src/dllmain.cpp", "src/global.cppm", "src/functions.cppm", "src/bonus.cppm", "src/music.cppm", "src/fontbin.cppm", "src/textloc.cppm", "src/EdgeMinHook.cppm")
     add_packages("edgeminhook")

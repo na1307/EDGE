@@ -19,7 +19,6 @@ add_requires("minhook", {plat = "windows", arch = "x86", configs = {toolchains =
 target("EdgeMinHook")
     add_rules("asi")
     add_files("src/dllmain.c", "src/Resource.rc")
-    add_includedirs("include")
-    add_headerfiles("include/EdgeMinHook.h")
+    add_headerfiles("src/EdgeMinHook.h")
     add_defines("EDGEMINHOOK_EXPORTS")
     add_packages("minhook")
