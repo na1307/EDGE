@@ -1,3 +1,4 @@
+// ReSharper disable CppParameterMayBeConst
 module;
 
 #include <windows.h>

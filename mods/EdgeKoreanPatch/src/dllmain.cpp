@@ -1,5 +1,5 @@
 ﻿#include <windows.h>
-#include <EdgeMinHook.h>
+#include <BluehillLoader.h>
 
 typedef void (*FUN_004a5bb0_t)();
 
@@ -20,10 +20,13 @@ void FUN_004a5bb0() {
     }
 }
 
+void GetRegisterEdgeHookPointer(RegisterEdgeHook_t out) {
+    out(reinterpret_cast<void*>(0x4a5bb0), reinterpret_cast<void*>(FUN_004a5bb0), reinterpret_cast<void**>(&org4a5bb0));
+}
+
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID) {
     if (ul_reason_for_call == DLL_PROCESS_ATTACH) {
         DisableThreadLibraryCalls(hModule);
-        RegisterEdgeHook(reinterpret_cast<void*>(0x4a5bb0), reinterpret_cast<void*>(FUN_004a5bb0), reinterpret_cast<void**>(&org4a5bb0));
     }
 
     return TRUE;

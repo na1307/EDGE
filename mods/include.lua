@@ -1,5 +1,3 @@
-option("asiextension", {default = true})
-
 toolchain("clang-cl-dependencies")
     set_kind("standalone")
 
@@ -24,12 +22,9 @@ toolchain("clang-cl-dependencies")
         end
     end)
 
-rule("asi")
+rule("edgeplugin")
     on_load(function (target)
         target:set("kind", "shared")
-        if has_config("asiextension") then
-            target:set("extension", ".asi")
-        end
         if is_mode("debug") and not has_config("nomtd") then
             target:set("runtimes", "MTd")
         else

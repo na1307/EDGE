@@ -13,10 +13,10 @@ elseif is_mode("release") then
 end
 
 set_policy("build.optimization.lto", is_mode("release"))
-add_repositories("EdgeMinHook ../EdgeMinHook/build")
-add_requires("edgeminhook", {plat = "windows", arch = "x86"})
+add_repositories("BluehillLoader ../BluehillLoader/build")
+add_requires("xinput1_3", {plat = "windows", arch = "x86"})
 
 target("EdgeKoreanPatch")
-    add_rules("asi")
+    add_rules("edgeplugin")
     add_files("src/dllmain.cpp")
-    add_packages("edgeminhook")
+    add_packages("xinput1_3")

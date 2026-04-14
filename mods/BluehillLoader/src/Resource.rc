@@ -67,12 +67,12 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "CompanyName", "Bluehill Inc."
-            VALUE "FileDescription", "MinHook for EDGE"
+            VALUE "FileDescription", "The Mod Loader for EDGE"
             VALUE "FileVersion", "1.0.0.0"
-            VALUE "InternalName", "EdgeMinHook.dll"
+            VALUE "InternalName", "xinput1_3.dll"
             VALUE "LegalCopyright", "Copyright (C) 2026 Bluehill Inc. All rights reserved."
-            VALUE "OriginalFilename", "EdgeMinHook.dll"
-            VALUE "ProductName", "EdgeMinHook"
+            VALUE "OriginalFilename", "xinput1_3.dll"
+            VALUE "ProductName", "Bluehill's Loader"
             VALUE "ProductVersion", "1.0.0.0"
         END
     END
