@@ -30,9 +30,9 @@ rule("asi")
         if has_config("asiextension") then
             target:set("extension", ".asi")
         end
-        if is_mode("debug") then
+        if is_mode("debug") and not has_config("nomtd") then
             target:set("runtimes", "MTd")
-        elseif is_mode("release") then
+        else
             target:set("runtimes", "MT")
         end
         target:set("policy", "build.c++.modules", true)
@@ -52,7 +52,11 @@ rule("asi")
         target:add("defines", "WIN32", "_WINDOWS", "_USRDLL", "_WINDLL", "_UNICODE", "UNICODE")
         target:add("cxflags", "-Gd")
         if is_mode("debug") then
-            target:add("defines", "DEBUG", "_DEBUG")
+            if not has_config("nomtd") then
+                target:add("defines", "DEBUG", "_DEBUG")
+            else
+                target:add("defines", "NDEBUG")
+            end
         elseif is_mode("release") then
             target:add("cxflags", "-Gw")
         end
