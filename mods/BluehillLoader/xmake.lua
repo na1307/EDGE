@@ -12,7 +12,7 @@ set_policy("build.optimization.lto", is_mode("release"))
 add_requires("minhook", {plat = "windows", arch = "x86", configs = {toolchains = "clang-cl-dependencies"}})
 
 target("xinput1_3")
-    add_rules("edgeplugin")
+    add_rules("edgemod")
     add_defines("BLUEHILLLOADER_EXPORTS")
     add_files("src/*.cpp", "src/*.cppm", "src/Resource.rc")
     add_shflags("-def:src/BluehillLoader.def", {force = true})

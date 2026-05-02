@@ -17,6 +17,6 @@ add_repositories("BluehillLoader ../BluehillLoader/build")
 add_requires("xinput1_3", {plat = "windows", arch = "x86"})
 
 target("EdgeKoreanPatch")
-    add_rules("edgeplugin")
+    add_rules("edgemod")
     add_files("src/dllmain.cpp")
     add_packages("xinput1_3")

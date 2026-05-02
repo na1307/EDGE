@@ -15,14 +15,14 @@ toolchain("clang-cl-dependencies")
     end)
 
     on_load(function (toolchain)
-        toolchain:add("cxflags", "-m32", "--target=i686-pc-windows-msvc")
-        toolchain:add("mxflags", "-m32", "--target=i686-pc-windows-msvc")
+        toolchain:add("cxflags", "-m32", "-msse3", "--target=i686-pc-windows-msvc")
+        toolchain:add("mxflags", "-m32", "-msse3", "--target=i686-pc-windows-msvc")
         if is_mode("release") then
             toolchain:add("cxflags", "-flto=thin")
         end
     end)
 
-rule("edgeplugin")
+rule("edgemod")
     on_load(function (target)
         target:set("kind", "shared")
         if is_mode("debug") and not has_config("nomtd") then
@@ -36,7 +36,7 @@ rule("edgeplugin")
         target:set("toolset", "sh", "lld-link")
         target:set("toolset", "ar", "llvm-ar")
         target:set("toolset", "as", "llvm-ml")
-        target:add("shflags", "-machine:x86", {force = true})
+        target:add("cxflags", "-m32", "-msse3", "--target=i686-pc-windows-msvc")
     end)
 
     after_load(function (target)

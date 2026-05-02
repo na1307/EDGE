@@ -22,13 +22,13 @@ export void load_dlls() {
         return;
     }
 
-    const auto plugins_folder = std::filesystem::path(buffer).replace_filename("plugins");
+    const auto mods_folder = std::filesystem::path(buffer).replace_filename("mods");
 
-    if (!std::filesystem::is_directory(plugins_folder)) {
+    if (!std::filesystem::is_directory(mods_folder)) {
         return;
     }
 
-    for (auto entry : std::filesystem::directory_iterator(plugins_folder)) {
+    for (auto entry : std::filesystem::directory_iterator(mods_folder)) {
         if (!entry.exists()) {
             continue;
         }
@@ -47,13 +47,13 @@ export void load_dlls() {
             continue;
         }
 
-        const auto grehp = reinterpret_cast<GetRegisterEdgeHookPointer_t>(GetProcAddress(dll, "GetRegisterEdgeHookPointer"));
+        const auto func = reinterpret_cast<RegisterHooks_t>(GetProcAddress(dll, "RegisterHooks"));
 
-        if (grehp == nullptr) {
+        if (func == nullptr) {
             continue;
         }
 
-        grehp(reinterpret_cast<RegisterEdgeHook_t>(RegisterEdgeHook));
+        func(reinterpret_cast<RegisterEdgeHook_t>(RegisterEdgeHook));
 
         loaded_dlls.push_back(dll);
     }

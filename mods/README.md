@@ -2,7 +2,7 @@
 
 This directory contains several Mods.
 
-## How to build an .asi mod
+## How to build .dll mods
 
 **Requirements**:
 
@@ -10,9 +10,7 @@ This directory contains several Mods.
 * Visual C++ (2026 Recommended)
 * LLVM with Clang-CL compiler
 
-The following commands are assumed to be run from the Visual Studio Developer Command Prompt.
-
-First of all, you need to generate local package for `EdgeMinHook`. Just run `generate.cmd`.
+First of all, you need to generate local package for `BluehillLoader`. Just run `generate.cmd`.
 
 Then set the build directory by entering the following command:
 

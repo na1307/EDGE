@@ -20,7 +20,7 @@ void FUN_004a5bb0() {
     }
 }
 
-void GetRegisterEdgeHookPointer(RegisterEdgeHook_t out) {
+void RegisterHooks(RegisterEdgeHook_t out) {
     out(reinterpret_cast<void*>(0x4a5bb0), reinterpret_cast<void*>(FUN_004a5bb0), reinterpret_cast<void**>(&org4a5bb0));
 }
 
